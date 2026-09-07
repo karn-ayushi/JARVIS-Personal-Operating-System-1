@@ -1,0 +1,28 @@
+kind = "web"
+previewPath = "/"
+title = "JARVIS Personal Operating System"
+description = "A context-aware personal AI operating system that combines memories, documents, goals, meetings, reminders, and growth into one calm workspace."
+version = "1.0.0"
+id = "artifacts/jarvis"
+router = "path"
+
+[[services]]
+name = "web"
+paths = [ "/" ]
+localPort = 21662
+
+[services.development]
+run = "pnpm --filter @workspace/jarvis run dev"
+
+[services.production]
+build = [ "pnpm", "--filter", "@workspace/jarvis", "run", "build" ]
+serve = "static"
+publicDir = "artifacts/jarvis/dist/public"
+
+[[services.production.rewrites]]
+from = "/*"
+to = "/index.html"
+
+[services.env]
+PORT = "21662"
+BASE_PATH = "/"
