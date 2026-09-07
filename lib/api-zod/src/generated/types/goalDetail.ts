@@ -5,7 +5,9 @@
  * JARVIS personal context and automation API
  * OpenAPI spec version: 0.2.0
  */
+import type { Goal } from './goal';
+import type { Milestone } from './milestone';
 
-export interface HealthStatus {
-  status: string;
-}
+export type GoalDetail = Goal & {
+  milestones: Milestone[];
+};

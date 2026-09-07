@@ -5,7 +5,9 @@
  * JARVIS personal context and automation API
  * OpenAPI spec version: 0.2.0
  */
+import type { ChatSource } from './chatSource';
 
-export interface HealthStatus {
-  status: string;
+export interface ChatResponse {
+  reply: string;
+  sources: ChatSource[];
 }

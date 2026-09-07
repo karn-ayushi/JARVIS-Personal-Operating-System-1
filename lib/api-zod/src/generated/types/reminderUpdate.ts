@@ -6,6 +6,10 @@
  * OpenAPI spec version: 0.2.0
  */
 
-export interface HealthStatus {
-  status: string;
+export interface ReminderUpdate {
+  /** @minLength 1 */
+  title?: string;
+  description?: string;
+  dueAt?: Date;
+  status?: string;
 }

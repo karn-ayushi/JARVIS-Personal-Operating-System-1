@@ -6,6 +6,9 @@
  * OpenAPI spec version: 0.2.0
  */
 
-export interface HealthStatus {
-  status: string;
+export interface DocumentQueryInput {
+  /** @minLength 1 */
+  query: string;
+  /** @minimum 1 */
+  documentId?: number;
 }

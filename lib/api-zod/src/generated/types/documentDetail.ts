@@ -5,7 +5,8 @@
  * JARVIS personal context and automation API
  * OpenAPI spec version: 0.2.0
  */
+import type { Document } from './document';
 
-export interface HealthStatus {
-  status: string;
-}
+export type DocumentDetail = Document & {
+  textPreview: string;
+};

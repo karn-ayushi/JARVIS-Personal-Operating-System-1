@@ -1,0 +1,1 @@
+- [Node PDF extraction](pdf-extraction.md) — use dynamic legacy PDF.js loading; common pdf-parse builds break Node startup.

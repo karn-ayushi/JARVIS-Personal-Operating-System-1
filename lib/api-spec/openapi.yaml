@@ -2,14 +2,22 @@ openapi: 3.1.0
 info:
   # Do not change the title, if the title changes, the import paths will be broken
   title: Api
-  version: 0.1.0
-  description: API specification
+  version: 0.2.0
+  description: JARVIS personal context and automation API
 servers:
   - url: /api
     description: Base API path
 tags:
   - name: health
     description: Health operations
+  - name: auth
+  - name: chat
+  - name: memories
+  - name: documents
+  - name: goals
+  - name: meetings
+  - name: reminders
+  - name: insights
 paths:
   /healthz:
     get:
@@ -24,7 +32,517 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/HealthStatus"
+  /auth/register:
+    post:
+      operationId: register
+      tags: [auth]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/RegisterInput"
+      responses:
+        "201":
+          description: Authenticated user
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
+        "409":
+          description: Email already exists
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+  /auth/login:
+    post:
+      operationId: login
+      tags: [auth]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/LoginInput"
+      responses:
+        "200":
+          description: Authenticated user
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
+        "401":
+          description: Invalid credentials
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+  /auth/logout:
+    post:
+      operationId: logout
+      tags: [auth]
+      responses:
+        "204":
+          description: Session ended
+  /auth/me:
+    get:
+      operationId: getCurrentUser
+      tags: [auth]
+      responses:
+        "200":
+          description: Current user
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
+        "401":
+          description: Not authenticated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+  /chat:
+    post:
+      operationId: sendChat
+      tags: [chat]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ChatInput"
+      responses:
+        "200":
+          description: Context-aware assistant reply
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ChatResponse"
+  /memories:
+    get:
+      operationId: listMemories
+      tags: [memories]
+      responses:
+        "200":
+          description: User memories
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Memory"
+    post:
+      operationId: createMemory
+      tags: [memories]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/MemoryInput"
+      responses:
+        "201":
+          description: Created memory
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Memory"
+  /memories/{id}:
+    patch:
+      operationId: updateMemory
+      tags: [memories]
+      parameters:
+        - $ref: "#/components/parameters/Id"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/MemoryUpdate"
+      responses:
+        "200":
+          description: Updated memory
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Memory"
+    delete:
+      operationId: deleteMemory
+      tags: [memories]
+      parameters:
+        - $ref: "#/components/parameters/Id"
+      responses:
+        "204":
+          description: Deleted memory
+  /documents:
+    get:
+      operationId: listDocuments
+      tags: [documents]
+      responses:
+        "200":
+          description: User documents
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Document"
+    post:
+      operationId: createDocument
+      tags: [documents]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/DocumentInput"
+      responses:
+        "201":
+          description: Indexed document
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Document"
+  /documents/upload:
+    post:
+      operationId: uploadDocument
+      tags: [documents]
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              $ref: "#/components/schemas/UploadDocumentInput"
+      responses:
+        "201":
+          description: Uploaded and indexed PDF
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Document"
+  /documents/{id}:
+    get:
+      operationId: getDocument
+      tags: [documents]
+      parameters:
+        - $ref: "#/components/parameters/Id"
+      responses:
+        "200":
+          description: Document detail
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DocumentDetail"
+    delete:
+      operationId: deleteDocument
+      tags: [documents]
+      parameters:
+        - $ref: "#/components/parameters/Id"
+      responses:
+        "204":
+          description: Deleted document
+  /documents/query:
+    post:
+      operationId: queryDocuments
+      tags: [documents]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/DocumentQueryInput"
+      responses:
+        "200":
+          description: Document-grounded answer
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DocumentQueryResponse"
+  /goals:
+    get:
+      operationId: listGoals
+      tags: [goals]
+      responses:
+        "200":
+          description: User goals
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Goal"
+    post:
+      operationId: createGoal
+      tags: [goals]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/GoalInput"
+      responses:
+        "201":
+          description: Created goal
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Goal"
+  /goals/{id}:
+    get:
+      operationId: getGoal
+      tags: [goals]
+      parameters:
+        - $ref: "#/components/parameters/Id"
+      responses:
+        "200":
+          description: Goal detail
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GoalDetail"
+    patch:
+      operationId: updateGoal
+      tags: [goals]
+      parameters:
+        - $ref: "#/components/parameters/Id"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/GoalUpdate"
+      responses:
+        "200":
+          description: Updated goal
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Goal"
+    delete:
+      operationId: deleteGoal
+      tags: [goals]
+      parameters:
+        - $ref: "#/components/parameters/Id"
+      responses:
+        "204":
+          description: Deleted goal
+  /goals/{id}/milestones:
+    post:
+      operationId: createMilestone
+      tags: [goals]
+      parameters:
+        - $ref: "#/components/parameters/Id"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/MilestoneInput"
+      responses:
+        "201":
+          description: Created milestone
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Milestone"
+  /milestones/{id}:
+    patch:
+      operationId: updateMilestone
+      tags: [goals]
+      parameters:
+        - $ref: "#/components/parameters/Id"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/MilestoneUpdate"
+      responses:
+        "200":
+          description: Updated milestone
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Milestone"
+    delete:
+      operationId: deleteMilestone
+      tags: [goals]
+      parameters:
+        - $ref: "#/components/parameters/Id"
+      responses:
+        "204":
+          description: Deleted milestone
+  /meetings:
+    get:
+      operationId: listMeetings
+      tags: [meetings]
+      responses:
+        "200":
+          description: User meetings
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Meeting"
+    post:
+      operationId: createMeeting
+      tags: [meetings]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/MeetingInput"
+      responses:
+        "201":
+          description: Processed meeting
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Meeting"
+  /meetings/{id}:
+    get:
+      operationId: getMeeting
+      tags: [meetings]
+      parameters:
+        - $ref: "#/components/parameters/Id"
+      responses:
+        "200":
+          description: Meeting detail
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Meeting"
+    delete:
+      operationId: deleteMeeting
+      tags: [meetings]
+      parameters:
+        - $ref: "#/components/parameters/Id"
+      responses:
+        "204":
+          description: Deleted meeting
+  /reminders:
+    get:
+      operationId: listReminders
+      tags: [reminders]
+      responses:
+        "200":
+          description: User reminders
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Reminder"
+    post:
+      operationId: createReminder
+      tags: [reminders]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ReminderInput"
+      responses:
+        "201":
+          description: Created reminder
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Reminder"
+  /reminders/{id}:
+    patch:
+      operationId: updateReminder
+      tags: [reminders]
+      parameters:
+        - $ref: "#/components/parameters/Id"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ReminderUpdate"
+      responses:
+        "200":
+          description: Updated reminder
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Reminder"
+    delete:
+      operationId: deleteReminder
+      tags: [reminders]
+      parameters:
+        - $ref: "#/components/parameters/Id"
+      responses:
+        "204":
+          description: Deleted reminder
+  /insights/dashboard:
+    get:
+      operationId: getDashboard
+      tags: [insights]
+      responses:
+        "200":
+          description: Dashboard context
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Dashboard"
+  /insights/growth:
+    get:
+      operationId: getGrowth
+      tags: [insights]
+      responses:
+        "200":
+          description: Growth metrics
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Growth"
+  /insights/timeline:
+    get:
+      operationId: getTimeline
+      tags: [insights]
+      responses:
+        "200":
+          description: Personal activity timeline
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/TimelineEvent"
+  /insights/knowledge:
+    get:
+      operationId: searchKnowledge
+      tags: [insights]
+      parameters:
+        - name: q
+          in: query
+          required: true
+          schema:
+            type: string
+            minLength: 1
+      responses:
+        "200":
+          description: Cross-domain search results
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/KnowledgeResult"
 components:
+  parameters:
+    Id:
+      name: id
+      in: path
+      required: true
+      schema:
+        type: integer
+        minimum: 1
   schemas:
     HealthStatus:
       type: object
@@ -33,4 +551,306 @@ components:
           type: string
       required:
         - status
+    Error:
+      type: object
+      properties:
+        error:
+          type: string
+      required: [error]
+    User:
+      type: object
+      properties:
+        id: { type: integer }
+        name: { type: string }
+        email: { type: string, format: email }
+      required: [id, name, email]
+    RegisterInput:
+      type: object
+      properties:
+        name: { type: string, minLength: 1 }
+        email: { type: string, format: email }
+        password: { type: string, minLength: 8 }
+      required: [name, email, password]
+    LoginInput:
+      type: object
+      properties:
+        email: { type: string, format: email }
+        password: { type: string, minLength: 1 }
+      required: [email, password]
+    ChatInput:
+      type: object
+      properties:
+        message: { type: string, minLength: 1, maxLength: 4000 }
+      required: [message]
+    ChatSource:
+      type: object
+      properties:
+        type: { type: string }
+        title: { type: string }
+        excerpt: { type: string }
+      required: [type, title, excerpt]
+    ChatResponse:
+      type: object
+      properties:
+        reply: { type: string }
+        sources:
+          type: array
+          items: { $ref: "#/components/schemas/ChatSource" }
+      required: [reply, sources]
+    Memory:
+      type: object
+      properties:
+        id: { type: integer }
+        content: { type: string }
+        category: { type: string }
+        importance: { type: integer }
+        source: { type: string }
+        createdAt: { type: string, format: date-time }
+        updatedAt: { type: string, format: date-time }
+      required: [id, content, category, importance, source, createdAt, updatedAt]
+    MemoryInput:
+      type: object
+      properties:
+        content: { type: string, minLength: 1 }
+        category: { type: string }
+        importance: { type: integer, minimum: 1, maximum: 5 }
+      required: [content]
+    MemoryUpdate:
+      type: object
+      properties:
+        content: { type: string, minLength: 1 }
+        category: { type: string }
+        importance: { type: integer, minimum: 1, maximum: 5 }
+    Document:
+      type: object
+      properties:
+        id: { type: integer }
+        filename: { type: string }
+        title: { type: string }
+        fileSize: { type: integer }
+        processingStatus: { type: string }
+        chunkCount: { type: integer }
+        createdAt: { type: string, format: date-time }
+      required: [id, filename, title, fileSize, processingStatus, chunkCount, createdAt]
+    DocumentDetail:
+      allOf:
+        - $ref: "#/components/schemas/Document"
+        - type: object
+          properties:
+            textPreview: { type: string }
+          required: [textPreview]
+    DocumentInput:
+      type: object
+      properties:
+        filename: { type: string, minLength: 1 }
+        title: { type: string, minLength: 1 }
+        content: { type: string, minLength: 1 }
+        fileSize: { type: integer, minimum: 0 }
+      required: [filename, title, content]
+    UploadDocumentInput:
+      type: object
+      properties:
+        file:
+          type: string
+          format: binary
+        title: { type: string }
+      required: [file]
+    DocumentQueryInput:
+      type: object
+      properties:
+        query: { type: string, minLength: 1 }
+        documentId: { type: integer, minimum: 1 }
+      required: [query]
+    DocumentQuerySource:
+      type: object
+      properties:
+        documentId: { type: integer }
+        title: { type: string }
+        excerpt: { type: string }
+      required: [documentId, title, excerpt]
+    DocumentQueryResponse:
+      type: object
+      properties:
+        answer: { type: string }
+        sources:
+          type: array
+          items: { $ref: "#/components/schemas/DocumentQuerySource" }
+      required: [answer, sources]
+    Goal:
+      type: object
+      properties:
+        id: { type: integer }
+        title: { type: string }
+        description: { type: string }
+        category: { type: string }
+        priority: { type: string }
+        status: { type: string }
+        progress: { type: integer }
+        deadline: { type: ["string", "null"], format: date }
+        createdAt: { type: string, format: date-time }
+        updatedAt: { type: string, format: date-time }
+      required: [id, title, description, category, priority, status, progress, deadline, createdAt, updatedAt]
+    GoalDetail:
+      allOf:
+        - $ref: "#/components/schemas/Goal"
+        - type: object
+          properties:
+            milestones:
+              type: array
+              items: { $ref: "#/components/schemas/Milestone" }
+          required: [milestones]
+    GoalInput:
+      type: object
+      properties:
+        title: { type: string, minLength: 1 }
+        description: { type: string }
+        category: { type: string }
+        priority: { type: string }
+        deadline: { type: ["string", "null"], format: date }
+      required: [title]
+    GoalUpdate:
+      type: object
+      properties:
+        title: { type: string, minLength: 1 }
+        description: { type: string }
+        category: { type: string }
+        priority: { type: string }
+        status: { type: string }
+        progress: { type: integer, minimum: 0, maximum: 100 }
+        deadline: { type: ["string", "null"], format: date }
+    Milestone:
+      type: object
+      properties:
+        id: { type: integer }
+        goalId: { type: integer }
+        title: { type: string }
+        description: { type: string }
+        status: { type: string }
+        progress: { type: integer }
+        dueDate: { type: ["string", "null"], format: date }
+        createdAt: { type: string, format: date-time }
+      required: [id, goalId, title, description, status, progress, dueDate, createdAt]
+    MilestoneInput:
+      type: object
+      properties:
+        title: { type: string, minLength: 1 }
+        description: { type: string }
+        dueDate: { type: ["string", "null"], format: date }
+      required: [title]
+    MilestoneUpdate:
+      type: object
+      properties:
+        title: { type: string, minLength: 1 }
+        description: { type: string }
+        status: { type: string }
+        progress: { type: integer, minimum: 0, maximum: 100 }
+        dueDate: { type: ["string", "null"], format: date }
+    Meeting:
+      type: object
+      properties:
+        id: { type: integer }
+        title: { type: string }
+        transcript: { type: string }
+        summary: { type: string }
+        decisions:
+          type: array
+          items: { type: string }
+        actionItems:
+          type: array
+          items: { type: string }
+        participants:
+          type: array
+          items: { type: string }
+        meetingDate: { type: ["string", "null"], format: date }
+        createdAt: { type: string, format: date-time }
+      required: [id, title, transcript, summary, decisions, actionItems, participants, meetingDate, createdAt]
+    MeetingInput:
+      type: object
+      properties:
+        title: { type: string, minLength: 1 }
+        transcript: { type: string, minLength: 20 }
+        meetingDate: { type: ["string", "null"], format: date }
+      required: [title, transcript]
+    Reminder:
+      type: object
+      properties:
+        id: { type: integer }
+        title: { type: string }
+        description: { type: string }
+        dueAt: { type: string, format: date-time }
+        status: { type: string }
+        source: { type: string }
+      required: [id, title, description, dueAt, status, source]
+    ReminderInput:
+      type: object
+      properties:
+        title: { type: string, minLength: 1 }
+        description: { type: string }
+        dueAt: { type: string, format: date-time }
+      required: [title, dueAt]
+    ReminderUpdate:
+      type: object
+      properties:
+        title: { type: string, minLength: 1 }
+        description: { type: string }
+        dueAt: { type: string, format: date-time }
+        status: { type: string }
+    Dashboard:
+      type: object
+      properties:
+        greeting: { type: string }
+        focus: { type: string }
+        activeGoals: { type: integer }
+        completedGoals: { type: integer }
+        upcomingReminders:
+          type: array
+          items: { $ref: "#/components/schemas/Reminder" }
+        recentMemories:
+          type: array
+          items: { $ref: "#/components/schemas/Memory" }
+        recentDocuments:
+          type: array
+          items: { $ref: "#/components/schemas/Document" }
+        recentMeetings:
+          type: array
+          items: { $ref: "#/components/schemas/Meeting" }
+        xp: { type: integer }
+        level: { type: integer }
+        streak: { type: integer }
+      required: [greeting, focus, activeGoals, completedGoals, upcomingReminders, recentMemories, recentDocuments, recentMeetings, xp, level, streak]
+    Growth:
+      type: object
+      properties:
+        xp: { type: integer }
+        level: { type: integer }
+        nextLevelXp: { type: integer }
+        streak: { type: integer }
+        activeGoals: { type: integer }
+        completedGoals: { type: integer }
+        completionRate: { type: integer }
+        completedTasks: { type: integer }
+        memoriesCreated: { type: integer }
+        documentsUploaded: { type: integer }
+        meetingsProcessed: { type: integer }
+        skills:
+          type: array
+          items: { type: string }
+      required: [xp, level, nextLevelXp, streak, activeGoals, completedGoals, completionRate, completedTasks, memoriesCreated, documentsUploaded, meetingsProcessed, skills]
+    TimelineEvent:
+      type: object
+      properties:
+        id: { type: string }
+        kind: { type: string }
+        title: { type: string }
+        description: { type: string }
+        occurredAt: { type: string, format: date-time }
+      required: [id, kind, title, description, occurredAt]
+    KnowledgeResult:
+      type: object
+      properties:
+        kind: { type: string }
+        title: { type: string }
+        excerpt: { type: string }
+        occurredAt: { type: string, format: date-time }
+      required: [kind, title, excerpt, occurredAt]
 
