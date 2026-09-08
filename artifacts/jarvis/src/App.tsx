@@ -34,6 +34,22 @@ const nav = [
 ];
 const dateLabel = (value?: string | null) => value ? new Intl.DateTimeFormat('en', { month: 'short', day: 'numeric', year: 'numeric' }).format(new Date(value)) : 'No date';
 const timeLabel = (value?: string | null) => value ? new Intl.DateTimeFormat('en', { hour: 'numeric', minute: '2-digit' }).format(new Date(value)) : '';
+const timeGreeting = (date: Date = new Date()) => {
+  const hour = date.getHours();
+  if (hour < 5) return 'Good night';
+  if (hour < 12) return 'Good morning';
+  if (hour < 17) return 'Good afternoon';
+  if (hour < 21) return 'Good evening';
+  return 'Good night';
+};
+function useCurrentTime() {
+  const [now, setNow] = useState(() => new Date());
+  useEffect(() => {
+    const timer = window.setInterval(() => setNow(new Date()), 60_000);
+    return () => window.clearInterval(timer);
+  }, []);
+  return now;
+}
 const initials = (name?: string) => (name || 'J').split(' ').map((part) => part[0]).slice(0, 2).join('').toUpperCase();
 const cx = (...classes: Array<string | false | undefined>) => classes.filter(Boolean).join(' ');
 const demoUser: User = { id: 0, name: 'Alex Sharma', email: 'demo@jarvis.ai' };
@@ -199,10 +215,12 @@ function Stat({ label, value, detail, icon: Icon }: { label: string; value: stri
 
 function DashboardPage() {
   const { data, isLoading, isError, refetch } = useGetDashboard(); const [, setLocation] = useLocation(); const [chat, setChat] = useState(''); const [answer, setAnswer] = useState(''); const [pending, setPending] = useState(false);
+  const now = useCurrentTime();
   if (isLoading) return <div className="grid gap-5"><Skeleton className="h-48" /><div className="grid gap-5 md:grid-cols-4">{[1, 2, 3, 4].map((i) => <Skeleton key={i} className="h-32" />)}</div></div>;
   if (isError || !data) return <Empty icon={Activity} title="The command center is quiet" body="JARVIS could not reach your workspace. Try again when you are ready." action={<Button data-testid="button-retry-dashboard" onClick={() => refetch()}>Try again</Button>} />;
   const ask = async (e: FormEvent) => { e.preventDefault(); if (!chat.trim()) return; setPending(true); setAnswer(''); try { const res = await sendChat({ message: chat }); setAnswer(res.reply); } catch { setAnswer('I could not connect just now. Your question is still here when you return.'); } finally { setPending(false); } };
-  return <div className="animate-rise"><div className="mb-8 flex flex-col justify-between gap-5 md:flex-row md:items-end"><div><div className="eyebrow">Command center / {timeLabel(new Date().toISOString())}</div><h1 data-testid="text-dashboard-greeting" className="mt-2 font-serif text-4xl leading-tight md:text-5xl">{data.greeting || 'Good to see you.'}</h1><p className="mt-3 text-sm text-muted-foreground">Here is the shape of your attention today.</p></div><Button data-testid="button-open-chat" onClick={() => setLocation('/chat')}><Sparkles size={15} />Open companion</Button></div>
+  const name = data.greeting?.split(',').slice(1).join(',').trim() || 'there';
+  return <div className="animate-rise"><div className="mb-8 flex flex-col justify-between gap-5 md:flex-row md:items-end"><div><div className="eyebrow">Command center / {timeLabel(now.toISOString())}</div><h1 data-testid="text-dashboard-greeting" className="mt-2 font-serif text-4xl leading-tight md:text-5xl">{timeGreeting(now)}, {name}.</h1><p className="mt-3 text-sm text-muted-foreground">Here is the shape of your attention today.</p></div><Button data-testid="button-open-chat" onClick={() => setLocation('/chat')}><Sparkles size={15} />Open companion</Button></div>
     <section className="relative overflow-hidden rounded-2xl bg-sidebar p-6 text-sidebar-foreground md:p-8"><div className="absolute -right-16 -top-20 size-64 rounded-full border border-accent/20" /><div className="absolute -right-4 -top-8 size-40 rounded-full border border-accent/15" /><div className="relative max-w-2xl"><div className="eyebrow text-accent">Current focus</div><h2 data-testid="text-current-focus" className="mt-4 font-serif text-3xl leading-tight md:text-4xl">{data.focus || 'Choose one meaningful thing to carry forward.'}</h2><div className="mt-7 flex flex-wrap gap-3"><span className="rounded-full border border-sidebar-border px-3 py-1.5 font-mono text-[10px] text-sidebar-foreground/60">{data.activeGoals} active goals</span><span className="rounded-full border border-sidebar-border px-3 py-1.5 font-mono text-[10px] text-sidebar-foreground/60">{data.streak} day streak</span></div></div></section>
     <div className="mt-5 grid gap-4 sm:grid-cols-3"><Stat label="Momentum" value={`${data.xp} XP`} detail={`Level ${data.level}`} icon={Zap} /><Stat label="Active goals" value={data.activeGoals} detail={`${data.completedGoals} completed`} icon={Target} /><Stat label="Streak" value={`${data.streak} days`} detail="Keep the thread alive" icon={Flame} /></div>
     <div className="mt-5 grid gap-5 lg:grid-cols-[1.15fr_.85fr]"><section className="panel p-5 md:p-6"><div className="mb-5 flex items-center justify-between"><div><div className="eyebrow">Next up</div><h2 className="mt-1 font-serif text-2xl">Reminders</h2></div><Link data-testid="link-dashboard-goals" href="/goals" className="text-xs font-semibold text-primary hover:underline">View goals</Link></div>{data.upcomingReminders?.length ? <div className="grid gap-3">{data.upcomingReminders.slice(0, 4).map((item) => <div key={item.id} data-testid={`row-reminder-${item.id}`} className="flex items-start gap-3 rounded-lg border border-border/70 p-3"><span className="mt-1 size-2 rounded-full bg-accent" /><div className="min-w-0 flex-1"><div className="text-sm font-semibold">{item.title}</div><div className="mt-1 text-xs text-muted-foreground">{item.description || 'No description'}</div></div><time className="font-mono text-[10px] text-muted-foreground">{timeLabel(item.dueAt)}</time></div>)}</div> : <Empty icon={Clock3} title="Clear runway" body="No reminders are waiting for you." action={<Link href="/goals" data-testid="link-add-reminder" className="text-sm font-semibold text-primary">Set a goal <ChevronRight size={14} className="inline" /></Link>} />}</section>
@@ -295,11 +313,12 @@ function DemoDashboard() {
 }
 function DemoDashboardWithData() {
   const { state, setState } = useDemo();
+  const now = useCurrentTime();
   const activeGoals = state.goals.filter((goal) => goal.status === 'active');
   const pendingReminders = state.reminders.filter((reminder) => reminder.status === 'pending');
   const toggleReminder = (id: number) => setState((current) => ({ ...current, reminders: current.reminders.map((reminder) => reminder.id === id ? { ...reminder, status: reminder.status === 'completed' ? 'pending' : 'completed' } : reminder) }));
   return <div className="animate-rise">
-    <PageHeading eyebrow="Presentation workspace" title="Good morning, Alex." body="A guided look at how JARVIS holds context and turns it into a useful next step." action={<Link href="/chat" data-testid="link-demo-open-chat" className="inline-flex items-center gap-2 rounded-lg bg-primary px-3.5 py-2 text-sm font-semibold text-primary-foreground">Ask JARVIS <ArrowUpRight size={15} /></Link>} />
+    <PageHeading eyebrow={`Presentation workspace · ${timeLabel(now.toISOString())}`} title={`${timeGreeting(now)}, Alex.`} body="A guided look at how JARVIS holds context and turns it into a useful next step." action={<Link href="/chat" data-testid="link-demo-open-chat" className="inline-flex items-center gap-2 rounded-lg bg-primary px-3.5 py-2 text-sm font-semibold text-primary-foreground">Ask JARVIS <ArrowUpRight size={15} /></Link>} />
     <section className="theme-spotlight relative overflow-hidden rounded-2xl p-7"><div className="absolute -right-20 -top-20 size-64 rounded-full border border-accent/20" /><div className="relative"><div className="eyebrow text-accent">Current focus</div><h2 className="mt-4 max-w-2xl font-serif text-4xl">Protect the first quiet hour for the work that matters.</h2><p className="mt-4 max-w-xl text-sm leading-7 text-muted-foreground">Your morning rhythm and creative practice point in the same direction.</p></div></section>
     <div className="mt-5 grid gap-4 sm:grid-cols-3"><Stat label="Momentum" value="1,840 XP" detail={`${state.memories.length} memories in context`} icon={Zap} /><Stat label="Active goals" value={activeGoals.length} detail={`${state.goals.length} goals seeded`} icon={Target} /><Stat label="Streak" value="12 days" detail={`${state.meetings.length} meetings processed`} icon={Flame} /></div>
     <div className="mt-5 grid gap-5 lg:grid-cols-[1.1fr_.9fr]">
