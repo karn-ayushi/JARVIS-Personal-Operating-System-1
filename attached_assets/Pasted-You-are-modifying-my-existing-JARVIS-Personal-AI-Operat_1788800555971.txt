@@ -1,0 +1,1047 @@
+You are modifying my existing JARVIS Personal AI Operating System project.
+
+IMPORTANT:
+DO NOT rebuild the project from scratch.
+DO NOT remove existing functionality.
+DO NOT change backend API contracts.
+DO NOT rename existing API endpoints.
+DO NOT remove authentication, chat history, memory CRUD, routing, or the existing FastAPI integration.
+
+Your job is primarily to redesign the FRONTEND UI and add a safe PRESENTATION/DEMO MODE.
+
+==================================================
+REFERENCE DESIGN
+==================================================
+
+I have provided a screenshot of the visual style I want.
+
+Use the screenshot as the primary visual reference.
+
+The target aesthetic is:
+
+- Premium futuristic AI SaaS
+- Very dark navy/black background
+- Blue → purple gradients
+- Electric cyan highlights
+- Subtle grid background
+- Glowing JARVIS AI orb
+- Concentric orbital rings
+- Floating capability labels
+- Large bold modern typography
+- Minimal but premium navigation
+- Glassmorphism/dark cards
+- Thin blue/purple borders
+- Soft shadows and glows
+- Lots of whitespace
+- Professional, not cartoonish
+- Similar visual quality to a high-end AI startup landing page
+
+Do NOT copy the screenshot literally.
+Use it as the visual design direction.
+
+==================================================
+CURRENT PROJECT
+==================================================
+
+The existing project already contains:
+
+- Landing page
+- Login
+- Registration
+- Authentication/session handling
+- AI Chat
+- Conversation history
+- Create/delete conversations
+- Persistent Memory
+- Add/edit/delete memory
+- Backend health checking
+- FastAPI API integration
+- Light/dark theme
+- Responsive layouts
+
+PRESERVE ALL OF THESE.
+
+The existing API currently uses routes such as:
+
+GET  /api/health
+
+POST /api/auth/register
+POST /api/auth/login
+GET  /api/auth/me
+POST /api/auth/logout
+
+GET  /api/conversations
+GET  /api/conversations/{id}
+DELETE /api/conversations/{id}
+
+POST /api/chat
+
+GET  /api/memories
+POST /api/memories
+PATCH /api/memories/{id}
+DELETE /api/memories/{id}
+
+DO NOT rename or modify these API contracts.
+
+==================================================
+PART 1 — REDESIGN THE LANDING PAGE
+==================================================
+
+Make the landing page the main first experience.
+
+The hero should closely follow this structure:
+
+----------------------------------------
+NAVBAR
+----------------------------------------
+
+Left:
+
+[JARVIS ORB LOGO] JARVIS
+
+Center:
+
+Features
+How It Works
+Use Cases
+Technology
+
+Right:
+
+Theme button
+Log in
+Get Started →
+
+Use a dark translucent navbar with backdrop blur.
+
+Add subtle border at bottom.
+
+The navbar should remain sticky.
+
+----------------------------------------
+HERO
+----------------------------------------
+
+Left side:
+
+Small eyebrow:
+
+● ONE MEMORY. INFINITE INTELLIGENCE.
+
+Large headline:
+
+Your AI that
+REMEMBERS.
+Your Journey.
+
+Use white text for most of the heading.
+
+Use blue → purple gradient for "REMEMBERS."
+
+Description:
+
+"JARVIS is a Personal AI Operating System that remembers your journey, understands your goals, and connects your digital world."
+
+Buttons:
+
+Get Started Free →
+See How It Works
+
+Below that add:
+
+One
+Memory Layer
+
+Multi
+LLM Support
+
+Context
+First AI
+
+You
+Stay in Control
+
+----------------------------------------
+RIGHT SIDE HERO VISUAL
+----------------------------------------
+
+Create a large futuristic JARVIS core.
+
+It should have:
+
+- glowing circular AI core
+- cyan center
+- blue/purple radial glow
+- 3 concentric orbital rings
+- subtle animation
+- two glowing AI eyes
+- floating capability labels
+
+Floating labels:
+
+✦ Memory
+
+▤ Documents
+
+◎ Goals
+
+▣ Meetings
+
+◌ AI Chat
+
+Animate the orbital rings slowly.
+
+Animate the floating nodes subtly.
+
+Do NOT make the animations distracting.
+
+==================================================
+PART 2 — LANDING PAGE SECTIONS
+==================================================
+
+Keep/add these sections.
+
+1. PROBLEM
+
+Heading:
+
+Your information is everywhere.
+Your intelligence shouldn't be.
+
+Show cards for:
+
+Documents
+AI Chats
+Meetings
+Goals
+Notes
+
+Then show:
+
+JARVIS
+One intelligent memory layer.
+
+Use a visual arrow/connection between the fragmented information and JARVIS.
+
+----------------------------------------
+
+2. FEATURES
+
+Heading:
+
+Everything you need.
+All in one place.
+
+Create six premium feature cards:
+
+AI Chat
+Memory Engine
+Document Intelligence
+Goal Engine
+Meeting Intelligence
+Unified Dashboard
+
+Each card should have:
+
+- icon
+- title
+- short description
+- subtle hover animation
+- arrow indicator
+
+----------------------------------------
+
+3. HOW JARVIS THINKS
+
+Heading:
+
+From question
+to intelligence.
+
+Show a vertical pipeline:
+
+01 You Ask
+
+02 Searches Memory
+
+03 Builds Context
+
+04 AI Models Think
+
+05 Personalized Response
+
+Use connected lines between steps.
+
+----------------------------------------
+
+4. USE CASES
+
+Create four cards:
+
+Students
+Professionals
+Developers
+Researchers
+
+Keep the cards visually consistent with the reference.
+
+----------------------------------------
+
+5. PERSISTENT MEMORY
+
+Heading:
+
+JARVIS remembers
+what matters.
+
+Create a futuristic horizontal memory timeline.
+
+Example events:
+
+Research Paper
+Uploaded
+
+AI Project Goal
+Created
+
+RAG Discussion
+Remembered
+
+Project Meeting
+Connected
+
+JARVIS Context
+Personalized
+
+----------------------------------------
+
+6. TECHNOLOGY
+
+Show technology cards.
+
+Keep whatever technologies are already represented in the existing project.
+
+Do not claim technologies that are not actually used by the project.
+
+----------------------------------------
+
+7. ROADMAP
+
+Show:
+
+MVP
+Memory + RAG
+
+01
+Integrations
+
+02
+Voice AI
+
+03
+Multi-Agent
+
+04
+AI for Everyone
+
+----------------------------------------
+
+8. FINAL CTA
+
+Heading:
+
+Your journey deserves
+a memory.
+
+Subtext:
+
+One Memory. Infinite Intelligence.
+
+Button:
+
+Start Building Your Memory →
+
+==================================================
+PART 3 — APPLICATION/DASHBOARD UI
+==================================================
+
+After login, make the application feel like the same product.
+
+Do NOT create a completely unrelated dashboard.
+
+Use:
+
+Dark navy background
+Subtle grid
+Glass/dark panels
+Blue/purple gradients
+Thin borders
+Rounded corners
+Soft glow
+
+Create a premium sidebar.
+
+Sidebar:
+
+JARVIS logo
+
+Dashboard
+AI Chat
+Memory
+Documents
+Goals
+Meetings
+Reminders
+Settings
+
+The currently selected item should have a blue/purple highlight.
+
+Keep unavailable functionality clearly marked if it isn't implemented yet.
+
+DO NOT fake backend functionality as real functionality.
+
+==================================================
+PART 4 — DASHBOARD
+==================================================
+
+Improve the existing dashboard presentation.
+
+Show:
+
+Good afternoon, [user name] 👋
+
+"Here's what's happening across your personal AI workspace."
+
+Stats:
+
+Active Goals
+Meetings Today
+New Memories
+Documents
+
+Use realistic presentation values.
+
+For example:
+
+3 Active Goals
+2 Meetings Today
+12 New Memories
+8 Documents
+
+These values should come from backend data when available.
+
+If backend data isn't available, use DEMO MODE values.
+
+Add sections such as:
+
+Recent Activity
+
+Upcoming Goals
+
+Recent Memories
+
+Recent Conversations
+
+Make the UI polished and presentation-ready.
+
+==================================================
+PART 5 — AI CHAT
+==================================================
+
+Keep the existing chat functionality exactly intact.
+
+Improve only the UI.
+
+Chat should look like a modern AI workspace.
+
+Include:
+
+Conversation sidebar
+
++ New Chat
+
+Conversation history
+
+Main chat area
+
+User messages
+
+JARVIS responses
+
+Input box
+
+Send button
+
+Backend status
+
+Use subtle message animations.
+
+Use a glowing JARVIS indicator for assistant responses.
+
+Do NOT change the existing /api/chat request/response behavior.
+
+==================================================
+PART 6 — MEMORY UI
+==================================================
+
+Keep all existing memory functionality:
+
+GET memories
+POST memory
+PATCH memory
+DELETE memory
+
+Redesign the memory interface.
+
+Create beautiful memory cards.
+
+Each memory card should show:
+
+Category
+Memory content
+Importance
+Source
+Edit
+Delete
+
+Categories include the existing categories:
+
+Preference
+Personal
+Education
+Project
+Career
+Interest
+Workflow
+Goal
+Instruction
+
+Add a top-level "Memory Core" visual.
+
+Example:
+
+✦ Persistent Memory
+
+"JARVIS continuously builds a contextual understanding of your journey."
+
+Add memory count:
+
+12 Memories
+
+etc.
+
+==================================================
+PART 7 — PRESENTATION / DEMO MODE
+==================================================
+
+This is VERY IMPORTANT.
+
+I need to demonstrate the project even if the backend/API is unavailable.
+
+Implement a safe frontend-only DEMO MODE.
+
+Detection:
+
+If:
+
+GET /api/health
+
+fails,
+
+automatically activate:
+
+PRESENTATION MODE
+
+Display a small status indicator:
+
+"Presentation Mode • Sample Data"
+
+Do NOT show alarming errors to the presenter.
+
+The normal backend behavior must remain unchanged whenever the backend is available.
+
+Priority:
+
+REAL BACKEND
+      ↓
+if unavailable
+      ↓
+DEMO MODE
+
+==================================================
+DEMO USER
+==================================================
+
+When demo mode is active, create/use a local demo user:
+
+Name:
+Alex Sharma
+
+Email:
+demo@jarvis.ai
+
+Do NOT send fake authentication requests to the backend.
+
+Use localStorage for demo state.
+
+==================================================
+DEMO MEMORIES
+==================================================
+
+Seed the demo memory database with:
+
+1.
+
+Content:
+"User is building JARVIS, a Personal AI Operating System."
+
+Category:
+Project
+
+Importance:
+5
+
+Source:
+Demo
+
+2.
+
+Content:
+"User prefers practical, implementation-focused guidance."
+
+Category:
+Preference
+
+Importance:
+4
+
+Source:
+Demo
+
+3.
+
+Content:
+"User is interested in AI, RAG, agent systems and developer tools."
+
+Category:
+Interest
+
+Importance:
+4
+
+Source:
+Demo
+
+4.
+
+Content:
+"Current priority is a polished MVP suitable for a project presentation."
+
+Category:
+Goal
+
+Importance:
+5
+
+Source:
+Demo
+
+5.
+
+Content:
+"JARVIS should remember context across conversations."
+
+Category:
+Instruction
+
+Importance:
+5
+
+Source:
+Demo
+
+6.
+
+Content:
+"Document Intelligence should support upload, retrieval and contextual answers."
+
+Category:
+Project
+
+Importance:
+4
+
+Source:
+Demo
+
+The demo memories must be editable and deletable.
+
+New memories added in demo mode should persist using localStorage.
+
+==================================================
+DEMO CONVERSATIONS
+==================================================
+
+Seed conversations:
+
+Conversation 1:
+
+Title:
+AI Project Planning
+
+Messages:
+
+User:
+"Help me plan my AI project for the next two weeks."
+
+JARVIS:
+"Absolutely. Based on your saved context, I suggest focusing first on the core AI workflow, then integrating memory and document intelligence, and leaving advanced integrations for the final polish."
+
+Conversation 2:
+
+Title:
+Research Notes
+
+User:
+"What should I remember from my research discussion?"
+
+JARVIS:
+"Your key takeaway was to connect research notes, documents and goals through one persistent context layer so future conversations can reuse them."
+
+Conversation 3:
+
+Title:
+JARVIS Memory
+
+User:
+"What do you remember about my project?"
+
+JARVIS:
+"I remember that you're building JARVIS as a Personal AI Operating System and that persistent context across conversations is one of its core capabilities."
+
+==================================================
+DEMO CHAT INTELLIGENCE
+==================================================
+
+In demo mode, do NOT call an external AI API.
+
+Create a small deterministic response engine.
+
+For example:
+
+If the user asks about:
+
+"memory"
+
+respond using the seeded memory context.
+
+If they ask:
+
+"goal"
+
+respond using the demo goal.
+
+If they ask:
+
+"document" or "PDF"
+
+respond:
+
+"Document Intelligence can connect uploaded files to the memory layer using chunking, embeddings and retrieval, allowing JARVIS to answer questions using relevant document context."
+
+If they ask:
+
+"meeting"
+
+respond with a meeting workflow.
+
+If they say:
+
+"hello"
+
+respond:
+
+"Hello! I'm JARVIS. I can help with your goals, documents, meetings, projects and remembered context."
+
+For other questions:
+
+"I understand. I'm currently running in Presentation Mode using seeded JARVIS context. Connect the FastAPI backend to switch back to live AI responses."
+
+Make it feel like a real demo.
+
+==================================================
+PART 8 — DEMO LOGIN
+==================================================
+
+If backend is unavailable:
+
+Allow the presenter to click:
+
+Log in
+
+or
+
+Get Started
+
+and enter the application without requiring real backend authentication.
+
+Provide a clearly visible but elegant indicator:
+
+PRESENTATION MODE
+
+Do NOT confuse this with production authentication.
+
+When backend is available, use the existing real authentication system.
+
+==================================================
+PART 9 — DEMO RESET
+==================================================
+
+Add a small option inside Settings or a subtle presentation-mode control:
+
+Reset Demo Data
+
+This should restore the original seeded demo memories/conversations.
+
+Do not affect real backend data.
+
+==================================================
+PART 10 — ROUTING
+==================================================
+
+Preserve the existing frontend routing.
+
+The expected flow is:
+
+Landing
+   ↓
+Login/Register
+   ↓
+Dashboard
+   ↓
+AI Chat
+   ↓
+Memory
+
+Do not break existing hash routes.
+
+The landing page should always be accessible.
+
+==================================================
+PART 11 — RESPONSIVE DESIGN
+==================================================
+
+The website must work on:
+
+Desktop
+Laptop
+Tablet
+Mobile
+
+On mobile:
+
+- collapse navigation
+- sidebar becomes a drawer or horizontal menu
+- hero becomes one column
+- JARVIS orb scales down
+- cards become single column
+- chat remains usable
+
+==================================================
+PART 12 — ANIMATIONS
+==================================================
+
+Add subtle premium animations:
+
+- orbital rotation
+- glowing core pulse
+- floating node movement
+- card hover
+- button hover
+- section reveal
+- chat message appearance
+- gradient glow
+
+Keep animations lightweight.
+
+Respect:
+
+prefers-reduced-motion
+
+when possible.
+
+==================================================
+PART 13 — VISUAL QUALITY
+==================================================
+
+Use:
+
+Font:
+Inter
+
+Heading font:
+Space Grotesk or a similar geometric modern font.
+
+Primary background approximately:
+
+#050816
+
+Secondary:
+
+#0B1022
+
+Blue:
+
+#4F7CFF
+
+Purple:
+
+#9A5CFF
+
+Cyan:
+
+#20C7FF
+
+Use gradients such as:
+
+linear-gradient(100deg, #4F7CFF, #9A5CFF)
+
+Do NOT overuse gradients.
+
+Use them mainly for:
+
+buttons
+important headings
+active states
+AI glow
+accent elements
+
+==================================================
+PART 14 — DO NOT BREAK FUNCTIONALITY
+==================================================
+
+Before making changes:
+
+1. Inspect the entire existing project.
+2. Understand the current frontend.
+3. Understand how the frontend communicates with FastAPI.
+4. Identify all existing routes.
+5. Identify all existing JS functions.
+6. Identify authentication behavior.
+7. Identify memory CRUD behavior.
+8. Identify conversation behavior.
+
+Then modify the UI.
+
+Do not replace working functionality with fake functionality.
+
+The following must continue working with the real backend:
+
+- Register
+- Login
+- Logout
+- Session checking
+- Chat
+- Conversation creation
+- Conversation history
+- Conversation deletion
+- Memory creation
+- Memory editing
+- Memory deletion
+- Backend health status
+
+==================================================
+PART 15 — CODE QUALITY
+==================================================
+
+Do not create duplicated event listeners.
+
+Do not create conflicting functions.
+
+Do not create multiple competing routers.
+
+Do not break existing IDs unless absolutely necessary.
+
+Prefer reusable CSS classes instead of excessive inline styling.
+
+Keep JavaScript organized.
+
+Add comments around DEMO MODE code.
+
+Keep the implementation simple enough to maintain.
+
+==================================================
+PART 16 — FINAL VERIFICATION
+==================================================
+
+After implementing the redesign:
+
+1. Run the project.
+2. Check the landing page.
+3. Check navigation.
+4. Check login.
+5. Check registration.
+6. Check dashboard.
+7. Check chat.
+8. Check conversation history.
+9. Check memory page.
+10. Check add/edit/delete memory.
+11. Stop the backend.
+12. Reload the frontend.
+13. Confirm Presentation Mode activates.
+14. Confirm sample memories appear.
+15. Confirm sample conversations appear.
+16. Confirm demo chat works.
+17. Confirm demo memory editing works.
+18. Confirm demo memory deletion works.
+19. Confirm demo memory creation works.
+20. Confirm the real backend still works after restarting it.
+21. Check mobile responsiveness.
+22. Check browser console for errors.
+
+IMPORTANT:
+
+If something currently works, do not remove it just because it isn't needed for the new design.
+
+==================================================
+FINAL RESULT
+==================================================
+
+The final website should feel like a polished AI startup product.
+
+The experience should be:
+
+LANDING PAGE
+↓
+Premium futuristic JARVIS branding
+↓
+GET STARTED
+↓
+LOGIN / REGISTER
+↓
+JARVIS DASHBOARD
+↓
+AI CHAT
+↓
+PERSISTENT MEMORY
+↓
+CONVERSATION HISTORY
+
+And when presenting without a backend:
+
+LANDING PAGE
+↓
+GET STARTED
+↓
+PRESENTATION MODE
+↓
+PRELOADED SAMPLE DATA
+↓
+WORKING DEMO CHAT + MEMORY
+
+Most important rule:
+
+PRESERVE FUNCTIONALITY.
+REDESIGN THE UI.
+ADD DEMO FALLBACK.
+DO NOT REWRITE THE PROJECT FROM SCRATCH.
