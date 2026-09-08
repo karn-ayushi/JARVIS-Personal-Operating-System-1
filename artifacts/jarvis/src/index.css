@@ -21,22 +21,25 @@
 }
 
 :root {
-  --background: 224 47% 7%; --foreground: 220 28% 94%;
-  --card: 224 42% 10%; --card-foreground: 220 28% 94%; --card-border: 223 33% 20%;
-  --border: 223 33% 20%; --input: 223 33% 24%; --ring: 192 100% 56%;
-  --primary: 222 100% 66%; --primary-foreground: 225 45% 7%;
-  --secondary: 224 34% 15%; --secondary-foreground: 220 28% 92%;
-  --muted: 224 31% 14%; --muted-foreground: 220 14% 62%;
-  --accent: 192 100% 56%; --accent-foreground: 225 45% 7%;
-  --destructive: 0 82% 65%; --destructive-foreground: 220 30% 96%;
-  --popover: 224 42% 10%; --popover-foreground: 220 28% 94%;
-  --sidebar: 225 48% 5%; --sidebar-foreground: 220 28% 94%; --sidebar-border: 223 33% 18%; --sidebar-accent: 224 36% 13%;
+  color-scheme: light;
+  --background: 220 25% 97%; --foreground: 222 38% 12%;
+  --card: 0 0% 100%; --card-foreground: 222 38% 12%; --card-border: 220 18% 87%;
+  --border: 220 18% 87%; --input: 220 18% 80%; --ring: 199 90% 48%;
+  --primary: 222 86% 53%; --primary-foreground: 0 0% 100%;
+  --secondary: 220 24% 93%; --secondary-foreground: 222 38% 16%;
+  --muted: 220 20% 93%; --muted-foreground: 220 12% 42%;
+  --accent: 191 88% 39%; --accent-foreground: 0 0% 100%;
+  --destructive: 0 72% 49%; --destructive-foreground: 0 0% 100%;
+  --popover: 0 0% 100%; --popover-foreground: 222 38% 12%;
+  --sidebar: 222 35% 96%; --sidebar-foreground: 222 38% 14%; --sidebar-border: 220 20% 87%; --sidebar-accent: 222 30% 91%;
+  --panel-deep: 220 24% 98%; --panel-shadow: 220 30% 20%; --noise-line: 220 35% 25%;
   --app-font-sans: 'Inter', sans-serif; --app-font-serif: 'Space Grotesk', sans-serif; --app-font-mono: 'DM Mono', monospace;
   --radius: 0.75rem; --tracking-normal: 0em;
   --chart-1: 222 100% 66%; --chart-2: 192 100% 56%; --chart-3: 267 100% 68%; --chart-4: 164 80% 54%; --chart-5: 30 100% 64%;
 }
 
 .dark {
+  color-scheme: dark;
   --background: 225 53% 5%; --foreground: 220 32% 96%;
   --card: 225 44% 8%; --card-foreground: 220 32% 96%; --card-border: 224 38% 17%;
   --border: 224 38% 17%; --input: 224 36% 22%; --ring: 192 100% 56%;
@@ -47,6 +50,7 @@
   --destructive: 0 82% 68%; --destructive-foreground: 220 32% 96%;
   --popover: 225 44% 8%; --popover-foreground: 220 32% 96%;
   --sidebar: 225 60% 3%; --sidebar-foreground: 220 32% 96%; --sidebar-border: 224 38% 14%; --sidebar-accent: 224 37% 10%;
+  --panel-deep: 225 38% 7%; --panel-shadow: 225 60% 2%; --noise-line: 220 40% 80%;
 }
 
 @layer base {
@@ -59,7 +63,8 @@
 @layer utilities {
   .font-serif { font-family: var(--app-font-serif); }
   .font-mono { font-family: var(--app-font-mono); }
-  .panel { background: linear-gradient(145deg, hsl(var(--card) / .96), hsl(225 38% 7% / .92)); border: 1px solid hsl(var(--card-border)); border-radius: 1rem; box-shadow: 0 18px 55px hsl(225 60% 2% / .3); }
+  .panel { background: linear-gradient(145deg, hsl(var(--card) / .98), hsl(var(--panel-deep) / .96)); border: 1px solid hsl(var(--card-border)); border-radius: 1rem; box-shadow: 0 18px 55px hsl(var(--panel-shadow) / .16); }
+  .theme-spotlight { background: linear-gradient(135deg, hsl(var(--sidebar) / .98), hsl(var(--secondary) / .95)); border: 1px solid hsl(var(--accent) / .18); }
   .eyebrow { color: hsl(var(--muted-foreground)); font-family: var(--app-font-mono); font-size: 10px; text-transform: uppercase; letter-spacing: .16em; }
   .gradient-text { background: linear-gradient(100deg, #4f7cff, #9a5cff 58%, #20c7ff); -webkit-background-clip: text; background-clip: text; color: transparent; }
 }
@@ -71,7 +76,7 @@
   pointer-events: none;
   z-index: 25;
   opacity: .18;
-  background-image: linear-gradient(hsl(220 40% 80% / .018) 1px, transparent 1px), linear-gradient(90deg, hsl(220 40% 80% / .018) 1px, transparent 1px);
+   background-image: linear-gradient(hsl(var(--noise-line) / .055) 1px, transparent 1px), linear-gradient(90deg, hsl(var(--noise-line) / .055) 1px, transparent 1px);
   background-size: 44px 44px;
 }
 .jarvis-noise::after { content: ''; position: fixed; inset: 0; pointer-events: none; opacity: .04; z-index: 30; background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 180 180' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.65'/%3E%3C/svg%3E"); }
