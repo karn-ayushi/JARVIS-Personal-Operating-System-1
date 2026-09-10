@@ -47,3 +47,51 @@ Thumbs.db
 # Replit
 .cache/
 .local/
+
+# Dependencies
+node_modules/
+.pnpm-store/
+
+# Build output
+dist/
+build/
+.next/
+.vite/
+
+# Environment / secrets
+.env
+.env.*
+!.env.example
+
+# Logs
+*.log
+logs/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+
+# Temporary files
+tmp/
+temp/
+
+# Coverage
+coverage/
+
+# Local databases / generated data
+*.db
+*.sqlite
+*.sqlite3
+
+# Cache
+.cache/
+.turbo/
+.eslintcache
+
+# Replit/local generated files
+.replit
+.upm/

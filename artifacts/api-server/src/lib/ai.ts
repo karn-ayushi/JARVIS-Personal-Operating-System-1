@@ -1,32 +1,77 @@
 import { logger } from "./logger";
 
-const model = process.env.GEMINI_MODEL ?? "gemini-2.0-flash";
+const model = process.env.GEMINI_MODEL ?? "gemini-3.6-flash";
 
 export async function generateGemini(prompt: string): Promise<string | null> {
   const key = process.env.GEMINI_API_KEY;
-  if (!key) return null;
+
+  if (!key) {
+    logger.warn("GEMINI_API_KEY is not configured");
+    return null;
+  }
+
   try {
     const response = await fetch(
-      `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${encodeURIComponent(key)}`,
+      `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`,
       {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          "x-goog-api-key": key,
+        },
         body: JSON.stringify({
-          contents: [{ role: "user", parts: [{ text: prompt }] }],
-          generationConfig: { temperature: 0.35, maxOutputTokens: 8192 },
+          contents: [
+            {
+              role: "user",
+              parts: [{ text: prompt }],
+            },
+          ],
+          generationConfig: {
+            temperature: 0.35,
+            maxOutputTokens: 8192,
+          },
         }),
       },
     );
+
     if (!response.ok) {
-      logger.warn({ status: response.status }, "Gemini request failed");
+      const errorBody = await response.text();
+
+      logger.warn(
+        {
+          status: response.status,
+          model,
+          error: errorBody,
+        },
+        "Gemini request failed",
+      );
+
       return null;
     }
+
     const payload = await response.json() as {
-      candidates?: Array<{ content?: { parts?: Array<{ text?: string }> } }>;
+      candidates?: Array<{
+        content?: {
+          parts?: Array<{
+            text?: string;
+          }>;
+        };
+      }>;
     };
-    return payload.candidates?.[0]?.content?.parts?.map((part) => part.text ?? "").join("").trim() || null;
+
+    const answer = payload.candidates?.[0]?.content?.parts
+      ?.map((part) => part.text ?? "")
+      .join("")
+      .trim();
+
+    if (!answer) {
+      logger.warn({ model }, "Gemini returned an empty response");
+      return null;
+    }
+
+    return answer;
   } catch (error) {
-    logger.warn({ error }, "Gemini request errored");
+    logger.warn({ error, model }, "Gemini request errored");
     return null;
   }
 }
