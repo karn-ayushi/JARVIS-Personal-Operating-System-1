@@ -65,7 +65,8 @@ export const sendChatBodyMessageMax = 4000;
 
 
 export const SendChatBody = zod.object({
-  "message": zod.string().min(1).max(sendChatBodyMessageMax)
+  "message": zod.string().min(1).max(sendChatBodyMessageMax),
+  "attachedDocumentId": zod.number().int().optional()
 })
 
 export const SendChatResponse = zod.object({
@@ -75,6 +76,160 @@ export const SendChatResponse = zod.object({
   "title": zod.string(),
   "excerpt": zod.string()
 }))
+})
+
+
+export const ListConversationsResponseItem = zod.object({
+  "id": zod.number().int(),
+  "title": zod.string(),
+  "createdAt": zod.coerce.date(),
+  "updatedAt": zod.coerce.date()
+})
+export const ListConversationsResponse = zod.array(ListConversationsResponseItem)
+
+
+
+
+
+
+
+export const CreateConversationBody = zod.object({
+  "title": zod.string().min(1),
+  "messages": zod.array(zod.object({
+  "role": zod.string().min(1),
+  "content": zod.string().min(1),
+  "sources": zod.array(zod.object({
+  "type": zod.string(),
+  "title": zod.string(),
+  "excerpt": zod.string()
+})).optional()
+})).optional()
+})
+
+export const CreateConversationResponse = zod.object({
+  "id": zod.number().int(),
+  "title": zod.string(),
+  "createdAt": zod.coerce.date(),
+  "updatedAt": zod.coerce.date()
+}).and(zod.object({
+  "messages": zod.array(zod.object({
+  "id": zod.number().int(),
+  "conversationId": zod.number().int(),
+  "role": zod.string(),
+  "content": zod.string(),
+  "sources": zod.array(zod.object({
+  "type": zod.string(),
+  "title": zod.string(),
+  "excerpt": zod.string()
+})),
+  "createdAt": zod.coerce.date()
+}))
+}))
+
+
+
+
+
+export const GetConversationParams = zod.object({
+  "id": zod.coerce.number().int().min(1)
+})
+
+export const GetConversationResponse = zod.object({
+  "id": zod.number().int(),
+  "title": zod.string(),
+  "createdAt": zod.coerce.date(),
+  "updatedAt": zod.coerce.date()
+}).and(zod.object({
+  "messages": zod.array(zod.object({
+  "id": zod.number().int(),
+  "conversationId": zod.number().int(),
+  "role": zod.string(),
+  "content": zod.string(),
+  "sources": zod.array(zod.object({
+  "type": zod.string(),
+  "title": zod.string(),
+  "excerpt": zod.string()
+})),
+  "createdAt": zod.coerce.date()
+}))
+}))
+
+
+
+
+
+export const UpdateConversationParams = zod.object({
+  "id": zod.coerce.number().int().min(1)
+})
+
+
+
+
+
+
+export const UpdateConversationBody = zod.object({
+  "title": zod.string().min(1),
+  "messages": zod.array(zod.object({
+  "role": zod.string().min(1),
+  "content": zod.string().min(1),
+  "sources": zod.array(zod.object({
+  "type": zod.string(),
+  "title": zod.string(),
+  "excerpt": zod.string()
+})).optional()
+})).optional()
+})
+
+export const UpdateConversationResponse = zod.object({
+  "id": zod.number().int(),
+  "title": zod.string(),
+  "createdAt": zod.coerce.date(),
+  "updatedAt": zod.coerce.date()
+})
+
+
+
+
+
+export const DeleteConversationParams = zod.object({
+  "id": zod.coerce.number().int().min(1)
+})
+
+export const DeleteConversationResponse = zod.void()
+
+
+
+
+
+export const CreateConversationMessageParams = zod.object({
+  "id": zod.coerce.number().int().min(1)
+})
+
+
+
+
+
+export const CreateConversationMessageBody = zod.object({
+  "role": zod.string().min(1),
+  "content": zod.string().min(1),
+  "sources": zod.array(zod.object({
+  "type": zod.string(),
+  "title": zod.string(),
+  "excerpt": zod.string()
+})).optional()
+})
+
+export const CreateConversationMessageResponse = zod.object({
+  "id": zod.number().int(),
+  "conversationId": zod.number().int(),
+  "role": zod.string(),
+  "content": zod.string(),
+  "sources": zod.array(zod.object({
+  "type": zod.string(),
+  "title": zod.string(),
+  "excerpt": zod.string()
+})),
+  "createdAt": zod.coerce.date()
 })
 
 

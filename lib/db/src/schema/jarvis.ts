@@ -87,6 +87,22 @@ export const milestonesTable = pgTable("jarvis_milestones", {
   ...timestamps,
 });
 
+export const conversationsTable = pgTable("jarvis_conversations", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").notNull(),
+  title: varchar("title", { length: 255 }).notNull().default("New conversation"),
+  ...timestamps,
+});
+
+export const chatMessagesTable = pgTable("jarvis_chat_messages", {
+  id: serial("id").primaryKey(),
+  conversationId: integer("conversation_id").notNull(),
+  role: varchar("role", { length: 20 }).notNull(),
+  content: text("content").notNull(),
+  sources: jsonb("sources").$type<Array<{ type: string; title: string; excerpt: string }>>().notNull().default([]),
+  createdAt: timestamps.createdAt,
+});
+
 export const meetingsTable = pgTable("jarvis_meetings", {
   id: serial("id").primaryKey(),
   userId: integer("user_id").notNull(),
@@ -134,6 +150,8 @@ export const insertDocumentSchema = createInsertSchema(documentsTable).omit({ id
 export const insertDocumentChunkSchema = createInsertSchema(documentChunksTable).omit({ id: true, createdAt: true });
 export const insertGoalSchema = createInsertSchema(goalsTable).omit({ id: true, createdAt: true, updatedAt: true });
 export const insertMilestoneSchema = createInsertSchema(milestonesTable).omit({ id: true, createdAt: true, updatedAt: true });
+export const insertConversationSchema = createInsertSchema(conversationsTable).omit({ id: true, createdAt: true, updatedAt: true });
+export const insertChatMessageSchema = createInsertSchema(chatMessagesTable).omit({ id: true, createdAt: true });
 export const insertMeetingSchema = createInsertSchema(meetingsTable).omit({ id: true, createdAt: true, updatedAt: true });
 export const insertReminderSchema = createInsertSchema(remindersTable).omit({ id: true });
 export const insertActivityEventSchema = createInsertSchema(activityEventsTable).omit({ id: true, occurredAt: true });
@@ -146,6 +164,8 @@ export type Document = typeof documentsTable.$inferSelect;
 export type DocumentChunk = typeof documentChunksTable.$inferSelect;
 export type Goal = typeof goalsTable.$inferSelect;
 export type Milestone = typeof milestonesTable.$inferSelect;
+export type Conversation = typeof conversationsTable.$inferSelect;
+export type ChatMessage = typeof chatMessagesTable.$inferSelect;
 export type Meeting = typeof meetingsTable.$inferSelect;
 export type Reminder = typeof remindersTable.$inferSelect;
 export type ActivityEvent = typeof activityEventsTable.$inferSelect;

@@ -39,6 +39,7 @@ export interface ChatInput {
      * @maxLength 4000
      */
   message: string;
+  attachedDocumentId?: number;
 }
 
 export interface ChatSource {
@@ -50,6 +51,40 @@ export interface ChatSource {
 export interface ChatResponse {
   reply: string;
   sources: ChatSource[];
+}
+
+export interface Conversation {
+  id: number;
+  title: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface ConversationMessage {
+  id: number;
+  conversationId: number;
+  role: string;
+  content: string;
+  sources: ChatSource[];
+  createdAt: string;
+}
+
+export type ConversationDetail = Conversation & {
+  messages: ConversationMessage[];
+};
+
+export interface ConversationMessageInput {
+  /** @minLength 1 */
+  role: string;
+  /** @minLength 1 */
+  content: string;
+  sources?: ChatSource[];
+}
+
+export interface ConversationInput {
+  /** @minLength 1 */
+  title: string;
+  messages?: ConversationMessageInput[];
 }
 
 export interface Memory {

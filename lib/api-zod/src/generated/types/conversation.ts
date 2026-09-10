@@ -6,11 +6,9 @@
  * OpenAPI spec version: 0.2.0
  */
 
-export interface ChatInput {
-  /**
-     * @minLength 1
-     * @maxLength 4000
-     */
-  message: string;
-  attachedDocumentId?: number;
+export interface Conversation {
+  id: number;
+  title: string;
+  createdAt: Date;
+  updatedAt: Date;
 }

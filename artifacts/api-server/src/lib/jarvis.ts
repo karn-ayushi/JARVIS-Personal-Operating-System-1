@@ -41,8 +41,27 @@ export function splitIntoChunks(text: string, size = 1100): string[] {
   return chunks;
 }
 
+const STOP_WORDS = new Set([
+  "a", "an", "the", "and", "or", "but", "is", "are", "was", "were", "be", "been", "being",
+  "have", "has", "had", "do", "does", "did", "will", "would", "should", "could", "might",
+  "must", "ma", "so", "than", "too", "very", "just", "now", "here", "there", "what",
+  "when", "where", "why", "how", "all", "any", "both", "each", "few", "more", "most",
+  "other", "some", "such", "no", "nor", "not", "only", "own", "same", "so", "than",
+  "too", "can", "will", "just", "don", "should", "now"
+]);
+
+function normalizeText(text: string): string {
+  return text.toLowerCase().replace(/[^\w\s]/g, " ").replace(/\s+/g, " ").trim();
+}
+
+function tokenize(query: string): string[] {
+  return normalizeText(query)
+    .split(/\s+/)
+    .filter((term) => term.length > 1 && !STOP_WORDS.has(term));
+}
+
 export async function retrieveDocumentChunks(userId: number, query: string, documentId?: number) {
-  const terms = query.toLowerCase().split(/\W+/).filter((term) => term.length > 2);
+  const terms = tokenize(query);
   const documents = await db.select({
     document: documentsTable,
     chunk: documentChunksTable,
@@ -51,25 +70,65 @@ export async function retrieveDocumentChunks(userId: number, query: string, docu
     .where(and(eq(documentsTable.userId, userId), documentId ? eq(documentsTable.id, documentId) : undefined))
     .orderBy(desc(documentChunksTable.createdAt));
   return documents
-    .map(({ document, chunk }) => ({
-      document,
-      chunk,
-      score: terms.reduce((score, term) => score + (chunk.content.toLowerCase().includes(term) ? 1 : 0), 0),
-    }))
-    .filter((item) => item.score > 0 || terms.length === 0)
-    .sort((a, b) => b.score - a.score)
+    .map(({ document, chunk }) => {
+      const chunkNormalized = normalizeText(chunk.content);
+      const matchingTerms = terms.filter((term) => chunkNormalized.includes(term));
+      return {
+        document,
+        chunk,
+        score: matchingTerms.length,
+        matchingTerms,
+      };
+    })
+    .filter((item) => item.score > 0)
+    .sort((a, b) => b.score - a.score || b.chunk.content.length - a.chunk.content.length)
     .slice(0, 5);
 }
 
+const CATEGORY_KEYWORDS: Record<string, string[]> = {
+  plan: ["plan", "today", "tomorrow", "schedule", "agenda", "day", "focus", "prioritize", "next step", "this week", "organize", "what should i", "what to do"],
+  goals: ["goal", "goals", "milestone", "progress", "objective", "target", "project", "building", "working on", "okr", "streak", "momentum", "complete"],
+  memory: ["remember", "memory", "memories", "what do i", "who am i", "my name", "preference", "favorite", "what am i", "personally", "profile"],
+  meetings: ["meeting", "meetings", "call", "calls", "appointment", "calendar", "schedule a meeting"],
+  reminders: ["reminder", "reminders", "remind", "to do", "todo", "task", "check off", "don't forget", "due", "overdue"],
+  documents: ["document", "documents", "file", "files", "upload", "pdf", "notes", "excerpt", "chunk", "indexed", "what does", "what did", "read"],
+};
+
+function classifyQuery(query: string): Set<string> {
+  const q = query.toLowerCase();
+  const selected = new Set<string>();
+  for (const [category, keywords] of Object.entries(CATEGORY_KEYWORDS)) {
+    for (const kw of keywords) {
+      if (q.includes(kw)) {
+        selected.add(category);
+        break;
+      }
+    }
+  }
+  return selected;
+}
+
 export async function buildContext(userId: number, query: string) {
-  const [memories, goals, reminders, meetings] = await Promise.all([
-    db.select().from(memoriesTable).where(eq(memoriesTable.userId, userId)).orderBy(desc(memoriesTable.importance), desc(memoriesTable.updatedAt)).limit(6),
-    db.select().from(goalsTable).where(and(eq(goalsTable.userId, userId), eq(goalsTable.status, "active"))).orderBy(desc(goalsTable.priority), desc(goalsTable.updatedAt)).limit(6),
-    db.select().from(remindersTable).where(and(eq(remindersTable.userId, userId), eq(remindersTable.status, "open"))).orderBy(remindersTable.dueAt).limit(6),
-    db.select().from(meetingsTable).where(eq(meetingsTable.userId, userId)).orderBy(desc(meetingsTable.createdAt)).limit(4),
-  ]);
-  const chunks = await retrieveDocumentChunks(userId, query);
-  return { memories, goals, reminders, meetings, chunks };
+  const categories = classifyQuery(query);
+  const results = { memories: [] as any[], goals: [] as any[], reminders: [] as any[], meetings: [] as any[], chunks: [] as any[] };
+  const fetches: Promise<void>[] = [];
+  if (categories.has("memory")) {
+    fetches.push(db.select().from(memoriesTable).where(eq(memoriesTable.userId, userId)).orderBy(desc(memoriesTable.importance), desc(memoriesTable.updatedAt)).limit(5).then((r) => { results.memories = r; }));
+  }
+  if (categories.has("goals") || categories.has("plan")) {
+    fetches.push(db.select().from(goalsTable).where(and(eq(goalsTable.userId, userId), eq(goalsTable.status, "active"))).orderBy(desc(goalsTable.priority), desc(goalsTable.updatedAt)).limit(5).then((r) => { results.goals = r; }));
+  }
+  if (categories.has("reminders") || categories.has("plan")) {
+    fetches.push(db.select().from(remindersTable).where(and(eq(remindersTable.userId, userId), eq(remindersTable.status, "open"))).orderBy(remindersTable.dueAt).limit(5).then((r) => { results.reminders = r; }));
+  }
+  if (categories.has("meetings") || categories.has("plan")) {
+    fetches.push(db.select().from(meetingsTable).where(eq(meetingsTable.userId, userId)).orderBy(desc(meetingsTable.createdAt)).limit(3).then((r) => { results.meetings = r; }));
+  }
+  if (categories.has("documents")) {
+    fetches.push(retrieveDocumentChunks(userId, query).then((r) => { results.chunks = r; }));
+  }
+  await Promise.all(fetches);
+  return results;
 }
 
 export async function searchKnowledge(userId: number, query: string) {
